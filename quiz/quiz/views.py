@@ -15,4 +15,9 @@ def get_quiz(request):
 
     quiz = models.Quiz.objects.get(name=quiz_name)
     quiz_data = serializers.QuizSerializer(quiz)
+
     return JsonResponse(quiz_data.data)
+
+
+#@api_view(['POST'])
+#def post_answers(request):

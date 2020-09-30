@@ -1,3 +1,6 @@
 grequests
 wheel
 mysql-connector-python
+Django
+mysqlclient
+djangorestframework

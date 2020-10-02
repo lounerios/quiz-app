@@ -15,7 +15,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         answers.append(obj.incorrect_answer_1)
         answers.append(obj.incorrect_answer_2)
         answers.append(obj.incorrect_answer_3)
-        
+
         random.shuffle(answers)
 
         return answers
@@ -26,3 +26,20 @@ class QuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Quiz
         fields = ('id', 'name', 'questions')
+
+
+class AnswerSerializer(serializers.Serializer):
+    question_id: serializers.IntegerField()
+    answer: serializers.CharField(max_length=256)
+
+class AnswersSerializer(serializers.Serializer):
+    answers = AnswerSerializer(many=True, read_only=True)
+    correct_answers = serializers.SerializerMethodField()
+
+    def get_correct_answers(self, obj):
+        print(obj.answers)
+
+    class Meta:
+        fields = ('correct_answers')
+
+

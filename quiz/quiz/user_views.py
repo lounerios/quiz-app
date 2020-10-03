@@ -42,7 +42,7 @@ def home_view(request):
 
 def results_view(request):
     if request.user.is_authenticated:
-        results = QuizResult.objects.all()
+        results = QuizResult.objects.filter(userName=request.user)
 
         return render(request, 'results.html', {'results': results})
 

@@ -25,14 +25,16 @@ def get_quiz(request):
 def post_answers(request):
     correct_answers = 0
     data = request.data
+    answers_count = 0
     for answer in data:
+        answers_count = answers_count + 1
         question_id = answer['question']
         question = models.Question.objects.get(id=question_id)
         if question.correct_answer == answer['answer']:
             correct_answers += 1
             
     jsonResponse = {}
-    jsonResponse['correct_answers'] = correct_answers 
+    jsonResponse['correct_answers'] = str(correct_answers) + '/' + str(answers_count)
     
     return JsonResponse(jsonResponse)
 

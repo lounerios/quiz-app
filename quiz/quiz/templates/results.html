@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{{quiz.name}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Correct Answer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{result.quizName}}</td>
+                    <td>{{result.correctAnswers}}</td>
+                </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+
+{% endblock %}

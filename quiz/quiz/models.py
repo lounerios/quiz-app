@@ -31,5 +31,5 @@ class QuizQuestions(models.Model):
 
 class QuizResult(models.Model):
     quizName = models.CharField(max_length=64)
-    correctAnswers = models.IntegerField()
+    correctAnswers = models.CharField(max_length=16)
     userName = models.CharField(max_length=64)

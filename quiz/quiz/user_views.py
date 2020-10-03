@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 import requests
@@ -40,29 +40,50 @@ def home_view(request):
     else:
         return redirect('login')
 
+def results_view(request):
+    if request.user.is_authenticated:
+        results = QuizResult.objects.all()
+
+        return render(request, 'results.html', {'results': results})
+
+    else:
+        return redirect('login')
 
 def login_view(request):
-    form = AuthenticationForm(request.POST)
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        form = AuthenticationForm(request.POST)
 
-    if 'username' in request.POST and 'password' in request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
+        if 'username' in request.POST and 'password' in request.POST:
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
 
-        if user is not None:
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+        
+        return render(request, 'login.html', {'form': form})    
+
+def signup_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('home')
 
-    return render(request, 'login.html', {'form': form})    
+        return render(request, 'signup.html', {'form': form})
 
-def signup_view(request):
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-        form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=password)
-        login(request, user)
-        return redirect('home')
-
-    return render(request, 'signup.html', {'form': form})
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect('login')
+    else:
+        return redirect('login')

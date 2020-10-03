@@ -9,13 +9,13 @@
     <input type="hidden" name="quizName" value="{{quiz.name}}"></input>
     {% for question in quiz.questions %}
     <div class="form-group">
-        <label for="formQuestion">{{question.question}}</label>
+        <label for="formQuestion">{{question.question|safe}}</label>
         <fieldset class="form-group">
             <div class="col-sm-10">
                 {% for answer in question.answers %}
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="question_{{question.id}}" value="{{answer}}" id="question_{{question.id}}" >
-                    <label class="form-check-label" for="gridRadios1">
+                    <input class="form-check-input" type="radio" name="question_{{question.id}}" value="{{answer}}" id="question_{{question.id}}" > 
+                    <label class="form-check-label" for="question_{{question.id}}">
                       {{ answer }}
                     </label>
                   </div>

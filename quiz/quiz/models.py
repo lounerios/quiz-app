@@ -28,3 +28,8 @@ class QuizQuestions(models.Model):
     class Meta:
         managed = False
         db_table = 'quiz_questions'
+
+class QuizResult(models.Model):
+    quizName = models.CharField(max_length=64)
+    correctAnswers = models.IntegerField()
+    userName = models.CharField(max_length=64)

@@ -2,10 +2,41 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
+import requests
+from quiz.game_models import GameQuestion, GameQuiz, GameAnswer, GameResult
+from quiz.models import QuizResult
 
 def home_view(request):
     if request.user.is_authenticated:
-        return render(request, 'home.html', {'user': request.user})
+        #Check if form is submitted
+        if request.method == 'POST':
+            answers = []
+            
+            quizId = request.POST.get('quiz', None)
+            quizName = request.POST.get('quizName', None)
+
+            for key in request.POST:
+                if 'question' in key:
+                    questionId = key.split('_')[1]
+                    answer = request.POST[key]
+                    gameAnswer = GameAnswer(questionId, answer)
+
+                    answers.append(gameAnswer.__dict__)
+
+            response = requests.post('http://127.0.0.1:8000/api/answers/'+quizId, json=answers)
+
+            quizResult = GameResult(**response.json())
+
+            userQuizResult = QuizResult(quizName=quizName, correctAnswers=quizResult.correct_answers, userName=request.user)
+            userQuizResult.save()
+
+            return render(request, 'result.html', {'result': quizResult})
+
+        else:
+            response = requests.get('http://127.0.0.1:8000/api/quiz')
+            quiz = GameQuiz(**response.json())
+
+            return render(request, 'home.html', {'user': request.user, 'quiz': quiz})
     else:
         return redirect('login')
 

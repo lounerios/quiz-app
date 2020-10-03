@@ -1,1 +1,32 @@
-{{ user.username}}
+{% extends 'base.html' %}
+
+{% block content %}
+
+{{quiz.name}}
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="quiz" value="{{quiz.id}}"></input>
+    <input type="hidden" name="quizName" value="{{quiz.name}}"></input>
+    {% for question in quiz.questions %}
+    <div class="form-group">
+        <label for="formQuestion">{{question.question}}</label>
+        <fieldset class="form-group">
+            <div class="col-sm-10">
+                {% for answer in question.answers %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{question.id}}" value="{{answer}}" id="question_{{question.id}}" >
+                    <label class="form-check-label" for="gridRadios1">
+                      {{ answer }}
+                    </label>
+                  </div>
+
+                {% endfor %}
+            </div>
+          </fieldset>
+    </div>
+
+    {% endfor %}
+
+    <button type="submit">Sumbit Answers</button>
+</form>
+{% endblock %}

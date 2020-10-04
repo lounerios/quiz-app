@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 import requests
 from quiz.game_models import GameQuestion, GameQuiz, GameAnswer, GameResult
-from quiz.models import QuizResult
+from quiz.models import QuizResult, QuizAnswer
 
 def home_view(request):
     if request.user.is_authenticated:
@@ -20,7 +20,8 @@ def home_view(request):
                     questionId = key.split('_')[1]
                     answer = request.POST[key]
                     gameAnswer = GameAnswer(questionId, answer)
-
+                    quizAnswer = QuizAnswer(questionId=questionId, questionAnswer=answer)
+                    quizAnswer.save()
                     answers.append(gameAnswer.__dict__)
 
             response = requests.post('http://127.0.0.1:8000/api/answers/'+quizId, json=answers)
@@ -48,6 +49,12 @@ def results_view(request):
 
     else:
         return redirect('login')
+
+def stats_view(request):
+    if request.user.is_authenticated:
+        response = requests.get('http://127.0.0.1:8000/api/rate')
+        rate = response.json()['rate']
+        return render(request, 'stats.html', {'rate': rate})
 
 def login_view(request):
     if request.user.is_authenticated:

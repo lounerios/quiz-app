@@ -1,4 +1,4 @@
-from quiz import models
+from quiz.api_models import Quiz, Question
 from rest_framework import serializers
 import random
 
@@ -6,7 +6,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     answers = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.Question
+        model = Question
         fields = ('id', 'question', 'answers')
     
     def get_answers(self, obj):
@@ -24,22 +24,8 @@ class QuizSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True, read_only=True)
     
     class Meta:
-        model = models.Quiz
+        model = Quiz
         fields = ('id', 'name', 'questions')
 
-
-class AnswerSerializer(serializers.Serializer):
-    question_id: serializers.IntegerField()
-    answer: serializers.CharField(max_length=256)
-
-class AnswersSerializer(serializers.Serializer):
-    answers = AnswerSerializer(many=True, read_only=True)
-    correct_answers = serializers.SerializerMethodField()
-
-    def get_correct_answers(self, obj):
-        print(obj.answers)
-
-    class Meta:
-        fields = ('correct_answers')
 
 
